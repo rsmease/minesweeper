@@ -1,7 +1,7 @@
 require 'byebug'
 class Board
   attr_accessor :grid
-  DIFFICULTY = 10
+  DIFFICULTY = 0
   def initialize(grid = self.create_grid)
     @grid = grid
   end
@@ -26,7 +26,7 @@ class Board
   def populate_mines
     #NOTE: Does not check for redundancy
     DIFFICULTY.times do
-      @grid[rand(@grid.length)][rand(@grid.length)].value = 2
+      @grid[rand(@grid.length)][rand(@grid.length)].value = 'X'
     end
   end
 
@@ -37,13 +37,43 @@ class Board
   def []=(pos, value)
     @grid[pos[0]][pos[1]].value = value
   end
+
+  def count_neighbor_mines(pos)
+    row, col = pos
+    count = 0
+
+    above = @grid[row-1][col-1..col+1]
+      .select { |tile| !tile.nil? && tile.mine? }
+    count += above.length
+
+    left = @grid[row][col-1]
+    right = @grid[row][col+1]
+    count += 1 if (!left.nil? && left.mine?)
+    count += 1 if (!right.nil? && right.mine?)
+
+    below = @grid[row+1][col-1..col+1]
+      .select { |tile| !tile.nil? && tile.mine? }
+    count += below.length
+
+    count
+  end
+
+  def is_mine?(pos)
+    return false if pos.nil?
+    row, col = pos
+    @grid[row][col].value == 'X'
+  end
 end
 
 class Tile
   attr_accessor :value, :revealed
-  def initialize(revealed = false, value = 1)
+  def initialize(revealed = false)
     @revealed = revealed
-    @value = value
+    @value = 0
+  end
+
+  def mine?
+    @value == "X"
   end
 
   def reveal
@@ -54,14 +84,15 @@ class Tile
     if @revealed
       return @value
     else
-      return 0
+      return "\#"
     end
   end
 end
 
 my_board = Board.new
-pos = [3, 8]
-my_board[pos] = 1
-my_board.render
+pos = [3, 5]
+# my_board[pos] = 1
+# my_board.render
 my_board.populate_mines
-my_board.render
+# my_board.render
+p my_board.count_neighbor_mines(pos)
