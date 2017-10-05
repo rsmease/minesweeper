@@ -12,9 +12,12 @@ class Board
 
   def render
     print "Your board looks like this—\n"
-    @grid.each do |row|
+    print "  #{(0...9).to_a.join(" ")}"
+    puts
+    @grid.each_with_index do |row, i|
+      print "#{i} "
       row.each do |col|
-        print "#{col.show}"
+        print "#{col.show} "
       end
       print "\n"
     end
