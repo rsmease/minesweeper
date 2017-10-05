@@ -1,3 +1,4 @@
+require 'byebug'
 class Board
   attr_accessor :grid
   DIFFICULTY = 10
@@ -12,7 +13,10 @@ class Board
   def render
     print "Your board looks like this—\n"
     @grid.each do |row|
-      print "#{row.join(" ")}\n"
+      row.each do |col|
+        print "#{col.show}"
+      end
+      print "\n"
     end
   end
 
@@ -28,7 +32,7 @@ class Board
   end
 
   def []=(pos, value)
-    @grid[pos[0]][pos[1]] = value
+    @grid[pos[0]][pos[1]].value = value
   end
 end
 
