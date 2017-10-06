@@ -69,7 +69,7 @@ class Board
   def is_mine?(pos)
     return false if pos.nil?
     row, col = pos
-    @grid[row][col].value == 'X'
+    pos.value == 'X'
   end
 
   def bomb_revealed?
