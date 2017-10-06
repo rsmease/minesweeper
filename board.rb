@@ -1,13 +1,20 @@
+require_relative 'tile'
 require 'byebug'
 class Board
   attr_accessor :grid
   DIFFICULTY = 0
   def initialize(grid = self.create_grid)
     @grid = grid
+    @bomb_revealed = false
   end
 
   def create_grid
-    Array.new(9) { Array.new(9, Tile.new) }
+    Array.new(9) { Array.new(9) { Tile.new } }
+  end
+
+  def reveal(pos)
+    row, col = pos
+    @grid[row][col].reveal
   end
 
   def render
@@ -31,7 +38,8 @@ class Board
   end
 
   def [](pos)
-    @grid[pos[0]][pos[1]]
+    value = @grid[pos[0]][pos[1]]
+    value.nil? ? false : value
   end
 
   def []=(pos, value)
@@ -63,36 +71,27 @@ class Board
     row, col = pos
     @grid[row][col].value == 'X'
   end
+
+  def bomb_revealed?
+    @bomb_revealed
+  end
+
+  def mine_found!
+    @bomb_revealed = true
+  end
+
 end
 
-class Tile
-  attr_accessor :value, :revealed
-  def initialize(revealed = false)
-    @revealed = revealed
-    @value = 0
-  end
 
-  def mine?
-    @value == "X"
-  end
-
-  def reveal
-    @revealed = true
-  end
-
-  def show
-    if @revealed
-      return @value
-    else
-      return "\#"
-    end
-  end
-end
 
 my_board = Board.new
-pos = [3, 5]
+# byebug
+pos = [4, 5]
+pos2 = [3, 7]
 # my_board[pos] = 1
 # my_board.render
 my_board.populate_mines
-# my_board.render
-p my_board.count_neighbor_mines(pos)
+my_board.reveal(pos)
+p my_board[pos2].revealed
+my_board.render
+# p my_board.count_neighbor_mines(pos)
